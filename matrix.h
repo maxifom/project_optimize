@@ -26,7 +26,7 @@ Matr InitMatr(int n, int m)
 // ѕечатает матрицу на экране
 void Print(Matr A)
 {
-	printf("\n\nEnter Matrix To Console!!!\n");
+	//printf("\n\nEnter Matrix To Console!!!\n");
 	for (int i = 0; i < A.order; i++)
 	{
 		for (int j = 0; j < A.order; j++)
@@ -53,7 +53,8 @@ Matr EnterRandom(Matr A)
 	srand((unsigned int)time(0));
 	for (int i = 0; i < A.size; i++)
 	{
-		A.M[i] = (double)rand() / (double)RAND_MAX;
+		A.M[i] = (double)rand() * 0.0000306;
+		//A.M[i] = (double)rand() / RAND_MAX;
 	}
 	return A;
 }
@@ -114,18 +115,21 @@ Matr operator *(Matr A, Matr B)
 		for (int j = 0; j < B.order; j++)
 			for (int l = 0; l < A.order; l++)
 				C.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
-
 	//возвращаем результат умножени€
 	return C;
 }
 
+
 // ”множение матрицы на скал€р
 Matr operator * (double a, Matr B)
 {
+	Matr C;
+	C = InitMatr(B.order, B.order);
+	C = EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножени€ матрицы на скал€р
 	for (int i = 0; i < B.size; i++)
-		B.M[i] *= a;
-	return B;
+		C.M[i] = B.M[i] * a;
+	return C;
 }
 
 
@@ -137,3 +141,4 @@ double Spur(Matr A)
 		t += A.M[i];
 	return t;
 }
+
