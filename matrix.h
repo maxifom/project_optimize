@@ -2,11 +2,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <time.h>
 
-struct Matr // Новый тип Матрица
+struct Matr // Новый тип Квадратная матрица
 {
-	double** M; // Собственно сама матрица
-	int row;    // количество строк
-	int col;    // количество столбцов
+	double* M; // Собственно сама матрица
+	int order;  //Порядок матрицы
+	int size;	//Размер матрицы
 };
 
 // Функция определения матрицы. по ее размерам. Возвращает пустую матрицу
@@ -15,15 +15,10 @@ Matr InitMatr(int n, int m)
 	//Определяем временную матрицу
 	Matr temp;
 	//выделяем память под строки
-	temp.M = new double*[n];
+	temp.size = n * n;
+	temp.M = new double[temp.size];
 	//запсываем размеры матрицы
-	temp.row = n;
-	temp.col = m;
-	//выделяем память под каждый из столбцов...
-	for (int i = 0; i < temp.row; i++)
-	{
-		temp.M[i] = new double[m];
-	}
+	temp.order = n;
 	//возвращаем созданную матрицу
 	return temp;
 }
@@ -32,10 +27,12 @@ Matr InitMatr(int n, int m)
 void Print(Matr A)
 {
 	printf("\n\nEnter Matrix To Console!!!\n");
-	for (int i = 0; i < A.row; i++)
+	for (int i = 0; i < A.order; i++)
 	{
-		for (int j = 0; j < A.col; j++)
-			printf("%10.8f    ", A.M[i][j]);
+		for (int j = 0; j < A.order; j++)
+		{
+			printf("%10.8f    ", A.M[i*A.order + j]);
+		}
 		printf("\n");
 	}
 }
@@ -43,10 +40,9 @@ void Print(Matr A)
 // Заполнение матрицы нолями, все элементы матрицы нули
 Matr EnterZero(Matr A)
 {
-	for (int i = 0; i < A.row; i++)
+	for (int i = 0; i < A.size; i++)
 	{
-		for (int j = 0; j < A.col; j++)
-			A.M[i][j] = 0;
+		A.M[i] = 0;
 	}
 	return A;
 }
@@ -55,10 +51,9 @@ Matr EnterZero(Matr A)
 Matr EnterRandom(Matr A)
 {
 	srand((unsigned int)time(0));
-	for (int i = 0; i < A.row; i++)
+	for (int i = 0; i < A.size; i++)
 	{
-		for (int j = 0; j < A.col; j++)
-			A.M[i][j] = (double)rand()/(double)RAND_MAX;
+		A.M[i] = (double)rand() / (double)RAND_MAX;
 	}
 	return A;
 }
@@ -66,28 +61,27 @@ Matr EnterRandom(Matr A)
 // заполняет матрицу числами введенными с клавиатуры
 Matr EnterMatr(Matr A)
 {
-    printf("\nEnter elements of matrix from Console...");
-	for (int i = 0; i < A.row; i++)
+	printf("\nEnter elements of matrix from Console...");
+
+	for (int i = 0; i < A.order; i++)
 	{
-		for (int j = 0; j < A.col; j++)
-        {
-            printf("\nEnter A[%i][%i]: ", i, j);
-            double temp;
-            scanf("%lf", &temp);
-            A.M[i][j] = temp;
-        }
+		for (int j = 0; j < A.order; j++)
+		{
+			printf("\nEnter A[%i][%i]: ", i, j);
+			scanf("%lf", &A.M[i*A.order + j]);
+		}
 	}
+
 	return A;
 }
 
 // Создание единичной матрицы
 Matr EnterUnit(Matr A)
 {
-	for (int i = 0; i < A.row; i++)
+	A = EnterZero(A);
+	for (int i = 0; i < A.size; i += A.order + 1)
 	{
-		for (int j = 0; j < A.col; j++)
-			A.M[i][j] = 0;
-		A.M[i][i] = 1;
+		A.M[i] = 1;
 	}
 	return A;
 }
@@ -95,20 +89,16 @@ Matr EnterUnit(Matr A)
 // Возвращает разность двух матриц
 Matr operator -(Matr A, Matr B)
 {
-	for (int i = 0; i < A.row; i++)
-		for (int j = 0; j < A.col; j++)
-			A.M[i][j] -= B.M[i][j];
-
+	for (int i = 0; i < A.size; i++)
+		A.M[i] -= B.M[i];
 	return A;
 }
 
 // Возвращает сумму двух матриц
 Matr operator +(Matr A, Matr B)
 {
-	for (int i = 0; i < A.row; i++)
-		for (int j = 0; j < A.col; j++)
-			A.M[i][j] += B.M[i][j];
-
+	for (int i = 0; i < A.size; i++)
+		A.M[i] += B.M[i];
 	return A;
 }
 
@@ -117,13 +107,13 @@ Matr operator *(Matr A, Matr B)
 {
 	//создаем вспомогательную матрицу
 	Matr C;
-	C = InitMatr(A.row, B.col);
+	C = InitMatr(A.order, B.order);
 	C = EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
-	for (int i = 0; i < A.row; i++)
-    	for (int j = 0; j < B.col; j++)
-			for (int l = 0; l < A.col; l++ )
-			C.M[i][j] += A.M[i][l] * B.M[l][j];
+	for (int i = 0; i < A.order; i++)
+		for (int j = 0; j < B.order; j++)
+			for (int l = 0; l < A.order; l++)
+				C.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
 
 	//возвращаем результат умножения
 	return C;
@@ -132,24 +122,18 @@ Matr operator *(Matr A, Matr B)
 // Умножение матрицы на скаляр
 Matr operator * (double a, Matr B)
 {
-	//создаем вспомогательную матрицу
-	Matr C;
-	C = InitMatr(B.row, B.col);
-	C = EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножения матрицы на скаляр
-	for (int i = 0; i < B.row; i++)
-    	for (int j = 0; j < B.col; j++)
-			C.M[i][j] = B.M[i][j] * a;
-
-	return C;
+	for (int i = 0; i < B.size; i++)
+		B.M[i] *= a;
+	return B;
 }
 
 
 //Функция для рассчета следа матрицы
 double Spur(Matr A)
 {
-    double t = 0;
-    for (int i = 0; i < A.row; i++)
-        t += A.M[i][i];
-    return t;
+	double t = 0;
+	for (int i = 0; i < A.size; i += A.order + 1)
+		t += A.M[i];
+	return t;
 }
