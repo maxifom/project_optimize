@@ -5,17 +5,18 @@
 struct Matr // Новый тип Квадратная матрица
 {
 	double* M; // Собственно сама матрица
-	int order;  //Порядок матрицы
-	int size;	//Размер матрицы
+	unsigned short int order;  //Порядок матрицы
+	unsigned short int size;	//Размер матрицы
 };
 
 // Функция определения матрицы. по ее размерам. Возвращает пустую матрицу
-Matr InitMatr(int n, int m)
+Matr InitMatr(unsigned int n,unsigned int m)
 {
 	//Определяем временную матрицу
 	Matr temp;
 	//выделяем память под строки
 	temp.size = n * n;
+
 	temp.M = new double[temp.size];
 	//запсываем размеры матрицы
 	temp.order = n;
@@ -27,9 +28,9 @@ Matr InitMatr(int n, int m)
 void Print(Matr A)
 {
 	//printf("\n\nEnter Matrix To Console!!!\n");
-	for (int i = 0; i < A.order; i++)
+	for (unsigned short int i = 0; i < A.order; i++)
 	{
-		for (int j = 0; j < A.order; j++)
+		for (unsigned short int j = 0; j < A.order; j++)
 		{
 			printf("%10.8f    ", A.M[i*A.order + j]);
 		}
@@ -40,7 +41,7 @@ void Print(Matr A)
 // Заполнение матрицы нолями, все элементы матрицы нули
 Matr EnterZero(Matr A)
 {
-	for (int i = 0; i < A.size; i++)
+	for (unsigned short int i = 0; i < A.size; i++)
 	{
 		A.M[i] = 0;
 	}
@@ -51,7 +52,7 @@ Matr EnterZero(Matr A)
 Matr EnterRandom(Matr A)
 {
 	srand((unsigned int)time(0));
-	for (int i = 0; i < A.size; i++)
+	for (unsigned short int i = 0; i < A.size; i++)
 	{
 		A.M[i] = (double)rand() * 0.0000306;
 		//A.M[i] = (double)rand() / RAND_MAX;
@@ -64,9 +65,9 @@ Matr EnterMatr(Matr A)
 {
 	printf("\nEnter elements of matrix from Console...");
 
-	for (int i = 0; i < A.order; i++)
+	for (unsigned short int i = 0; i < A.order; i++)
 	{
-		for (int j = 0; j < A.order; j++)
+		for (unsigned short int j = 0; j < A.order; j++)
 		{
 			printf("\nEnter A[%i][%i]: ", i, j);
 			scanf("%lf", &A.M[i*A.order + j]);
@@ -80,7 +81,7 @@ Matr EnterMatr(Matr A)
 Matr EnterUnit(Matr A)
 {
 	A = EnterZero(A);
-	for (int i = 0; i < A.size; i += A.order + 1)
+	for (unsigned short int i = 0; i < A.size; i += A.order + 1)
 	{
 		A.M[i] = 1;
 	}
@@ -90,7 +91,7 @@ Matr EnterUnit(Matr A)
 // Возвращает разность двух матриц
 Matr operator -(Matr A, Matr B)
 {
-	for (int i = 0; i < A.size; i++)
+	for (unsigned short int i = 0; i < A.size; i++)
 		A.M[i] -= B.M[i];
 	return A;
 }
@@ -98,10 +99,34 @@ Matr operator -(Matr A, Matr B)
 // Возвращает сумму двух матриц
 Matr operator +(Matr A, Matr B)
 {
-	for (int i = 0; i < A.size; i++)
+	for (unsigned short int i = 0; i < A.size; i++)
 		A.M[i] += B.M[i];
 	return A;
 }
+
+
+
+Matr sub(Matr A, Matr B, Matr buffer)
+{
+	//buffer = EnterZero(buffer);
+	for (unsigned short int i = 0; i < A.size; i++)
+		buffer.M[i] = A.M[i] - B.M[i];
+	return buffer;
+}
+
+Matr multiply(Matr A, Matr B, Matr buffer)
+{
+	//создаем вспомогательную матрицу
+	buffer = EnterZero(buffer);
+	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
+	for (unsigned short int i = 0; i < A.order; i++)
+		for (unsigned short int j = 0; j < B.order; j++)
+			for (unsigned short int l = 0; l < A.order; l++)
+				buffer.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
+	//возвращаем результат умножения
+	return buffer;
+}
+
 
 // Умножение двух матриц
 Matr operator *(Matr A, Matr B)
@@ -111,12 +136,21 @@ Matr operator *(Matr A, Matr B)
 	C = InitMatr(A.order, B.order);
 	C = EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
-	for (int i = 0; i < A.order; i++)
-		for (int j = 0; j < B.order; j++)
-			for (int l = 0; l < A.order; l++)
+	for (unsigned short int i = 0; i < A.order; i++)
+		for (unsigned short int j = 0; j < B.order; j++)
+			for (unsigned short int l = 0; l < A.order; l++)
 				C.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
 	//возвращаем результат умножения
 	return C;
+}
+
+Matr mulScalar(double a, Matr B, Matr buffer)
+{
+	//buffer = EnterZero(buffer);
+	//во вспомогательную матрицу записываем результат умножения матрицы на скаляр
+	for (unsigned short int i = 0; i < B.size; i++)
+		buffer.M[i] = B.M[i] * a;
+	return buffer;
 }
 
 
@@ -127,7 +161,7 @@ Matr operator * (double a, Matr B)
 	C = InitMatr(B.order, B.order);
 	C = EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножения матрицы на скаляр
-	for (int i = 0; i < B.size; i++)
+	for (unsigned short int i = 0; i < B.size; i++)
 		C.M[i] = B.M[i] * a;
 	return C;
 }
@@ -137,7 +171,7 @@ Matr operator * (double a, Matr B)
 double Spur(Matr A)
 {
 	double t = 0;
-	for (int i = 0; i < A.size; i += A.order + 1)
+	for (unsigned short int i = 0; i < A.size; i += A.order + 1)
 		t += A.M[i];
 	return t;
 }
