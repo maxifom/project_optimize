@@ -9,43 +9,57 @@ using namespace std;
 
 int main()
 {
+
+
+	//test();
+	//system("PAUSE");
+	//return 0;
+
+
 	//Спрашиваем у пользователя и считываем размер матрицы, с которой будем работать
 	//printf("Enter Size of Matrix: ");
-	unsigned short int N = 3;
+	unsigned const short int N = 3;
 	//scanf("%i", &N);
 	//SquareMatr A2 = InitMatr(N, N);
 	//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 	//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
 	////A = EnterRandom(A);
 
-
-	/*Matr A = InitMatr(N, N);
-
-	A.size = 9;
-	A.order = 3;
-	A.M = new double[9]{
-		1.0,2.0,3.0,4.0,10.0,6.0,7.0,8.0,9.0
+	Matr buffer = InitMatrSSE(N, N);
+	Matr A = InitMatrSSE(N, N);
+	Matr B = InitMatrSSE(N, N);
+	A.size = N*N;
+	A.order = N;
+	A.M = new double[N*N]{
+		4.0,8.0,16.0,20.0,10.0,2.0,3.1,4.2,5.0
+	};
+	B.size = N*N;
+	B.order = N;
+	B.M = new double[N*N]{
+		1.0,2.0,3.0,4.0,1.0,2.0,3.0,4.0,6.0
 	};
 
 	Print(A);
-
-	A = transpose(A);
-
-	Print(A);
-
-	return 0;*/
+	Print(B);
+	Print(sub(A, B, buffer));
+	system("PAUSE");
+	return 0;
 
 
 
 	//unsigned int count = 2;
-	unsigned int count = 1000000;
+	unsigned int count = 500000;
 	unsigned int start_time = clock();
 	for (unsigned int _i = 0; _i < count; _i++)
 	{
 		//Создаем матрицу заданного размера
 		Matr A = InitMatr(N, N);
 
-		Matr buffer = InitMatr(N, N);
+		Matr buffer = InitMatrSSE(N, N);
+		
+
+
+
 		Matr buffer2 = InitMatr(N, N);
 		Matr buffer3 = InitMatr(N, N);
 		//Matr buffer4 = InitMatr(N, N);
@@ -63,6 +77,7 @@ int main()
 		//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 		//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
 		A = EnterRandom(A);
+		//Print(A);
 		//заполняем матрицу с клавиатуры, актуально для небольши размеров матрицы
 		//A = EnterMatr(A);
 		//A2 = EnterMatr(A2);
