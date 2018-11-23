@@ -19,8 +19,25 @@ int main()
 	////A = EnterRandom(A);
 
 
+	/*Matr A = InitMatr(N, N);
+
+	A.size = 9;
+	A.order = 3;
+	A.M = new double[9]{
+		1.0,2.0,3.0,4.0,10.0,6.0,7.0,8.0,9.0
+	};
+
+	Print(A);
+
+	A = transpose(A);
+
+	Print(A);
+
+	return 0;*/
 
 
+
+	//unsigned int count = 2;
 	unsigned int count = 1000000;
 	unsigned int start_time = clock();
 	for (unsigned int _i = 0; _i < count; _i++)
