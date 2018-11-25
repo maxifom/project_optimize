@@ -2,6 +2,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <time.h>
 #include <xmmintrin.h>
+#include <mmintrin.h>
+#include <emmintrin.h>
+
+
 struct Matr // Новый тип Квадратная матрица
 {
 	double* M; // Собственно сама матрица
@@ -18,6 +22,21 @@ Matr InitMatr(unsigned int n, unsigned int m)
 	temp.size = n * n;
 
 	temp.M = new double[temp.size];
+	//запсываем размеры матрицы
+	temp.order = n;
+	//возвращаем созданную матрицу
+	return temp;
+}
+
+// Функция определения матрицы. по ее размерам. Возвращает пустую матрицу
+Matr InitMatrSSE(unsigned int n, unsigned int m)
+{
+	//Определяем временную матрицу
+	Matr temp;
+	//выделяем память под строки
+	temp.size = n * n;
+	void *ptr = _aligned_malloc(temp.size * sizeof(double), 16);
+	temp.M = reinterpret_cast<double*>(ptr);
 	//запсываем размеры матрицы
 	temp.order = n;
 	//возвращаем созданную матрицу
@@ -111,15 +130,44 @@ Matr EnterUnit(Matr A)
 
 
 
+
+
+
 Matr sub(Matr A, Matr B, Matr buffer)
 {
 	//buffer = EnterZero(buffer);
-	for (unsigned short int i = 0; i < A.size; i++)
+	__m128d* a_pointer = reinterpret_cast<__m128d*>(A.M);
+	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
+	/*for (unsigned short int i = 0; i < A.size; i++)
 	{
 		buffer.M[i] = A.M[i] - B.M[i];
+	}*/
+	/*auto size = sizeof(double);
+	void *ptr = _aligned_malloc(A.size * size, 16);
+	double* c = reinterpret_cast<double*>(ptr);*/
+	for (unsigned short int i = 0; i < A.size / 2; i++, a_pointer++, b_pointer++, buffer.M += 2)
+	{
+		_mm_store_pd(buffer.M, _mm_sub_pd(*a_pointer, *b_pointer));
 	}
+	double last_a = *(reinterpret_cast<double*>(a_pointer));
+	double last_b = *(reinterpret_cast<double*>(b_pointer));
+	if (A.order % 2 == 1)
+	{
+		*buffer.M = last_a - last_b;
+		buffer.M += 1;
+	}
+	buffer.M -= buffer.size;
 	return buffer;
+	//return buffer;
 }
+
+
+
+
+
+
+
+
 
 Matr multiply(Matr A, Matr B, Matr buffer)
 {
@@ -140,16 +188,30 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 		}
 	}
 
+	
 	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
-	for (unsigned short int i = 0; i < A.order; i++)
+	/*for (unsigned short int i = 0; i < A.order; i++)
 	{
 		temp_i = i*A.order;
 		for (unsigned short int j = 0; j < B.order; j++)
 		{
 			buffer.M[temp_i + j] += A.M[temp_i + j] * B.M[temp_i + j];
 		}
+	}*/
+	__m128d* a_pointer = reinterpret_cast<__m128d*>(A.M);
+	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
+	for (unsigned short int i = 0; i < A.size / 2; i++, a_pointer++, b_pointer++, buffer.M += 2)
+	{
+		_mm_store_pd(buffer.M, _mm_mul_pd(*a_pointer, *b_pointer));
 	}
-	//возвращаем результат умножения
+	double last_a = *(reinterpret_cast<double*>(a_pointer));
+	double last_b = *(reinterpret_cast<double*>(b_pointer));
+	if (A.order % 2 == 1)
+	{
+		*buffer.M = last_a * last_b;
+		buffer.M += 1;
+	}
+	buffer.M -= buffer.size;
 	return buffer;
 }
 
@@ -157,10 +219,26 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 
 Matr mulScalar(double a, Matr B, Matr buffer)
 {
-	//buffer = EnterZero(buffer);
-	//во вспомогательную матрицу записываем результат умножения матрицы на скаляр
-	for (unsigned short int i = 0; i < B.size; i++)
-		buffer.M[i] = B.M[i] * a;
+	////buffer = EnterZero(buffer);
+	////во вспомогательную матрицу записываем результат умножения матрицы на скаляр
+	//for (unsigned short int i = 0; i < B.size; i++)
+	//	buffer.M[i] = B.M[i] * a;
+	//return buffer;
+
+
+	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
+	__m128d* double_pointer = reinterpret_cast<__m128d*>(&a);
+	for (unsigned short int i = 0; i < B.size / 2; i++, b_pointer++, buffer.M += 2)
+	{
+		_mm_store_pd(buffer.M, _mm_mul_pd(*double_pointer, *b_pointer));
+	}
+	double last_b = *(reinterpret_cast<double*>(b_pointer));
+	if (B.order % 2 == 1)
+	{
+		*buffer.M = a * last_b;
+		buffer.M += 1;
+	}
+	buffer.M -= buffer.size;
 	return buffer;
 }
 
@@ -193,4 +271,30 @@ double Spur(Matr A)
 //		}
 //	}
 //	return A;
+//}
+
+
+//void test()
+//{
+//	const auto N = 8;
+//
+//	alignas(16) float a[] = { 1.0,  2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+//	alignas(16) float b[] = { 1.0,  2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+//
+//	__m128* a_simd = reinterpret_cast<__m128*>(a);
+//	__m128* b_simd = reinterpret_cast<__m128*>(b);
+//
+//	auto size = sizeof(float);
+//	void *ptr = _aligned_malloc(N * size, 32);
+//	float* c = reinterpret_cast<float*>(ptr);
+//
+//	for (size_t i = 0; i < N / 2; i++, a_simd++, b_simd++, c += 4)
+//		_mm_store_ps(c, _mm_add_ps(*a_simd, *b_simd));
+//	c -= 2 * N;
+//
+//	std::cout.precision(10);
+//	for (size_t i = 0; i < N; i++)
+//		std::cout << c[i] << std::endl;
+//
+//
 //}
