@@ -1,30 +1,50 @@
-//#pragma once
+п»ї//#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <time.h>
+
 #include <xmmintrin.h>
-struct Matr // Новый тип Квадратная матрица
+#include <mmintrin.h>
+#include <emmintrin.h>
+
+
+struct Matr // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 {
-	double* M; // Собственно сама матрица
-	unsigned short int order;  //Порядок матрицы
-	unsigned short int size;	//Размер матрицы
+	double* M; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	unsigned short int order;  //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	unsigned short int size;	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 };
 
-// Функция определения матрицы. по ее размерам. Возвращает пустую матрицу
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Matr InitMatr(unsigned int n, unsigned int m)
 {
-	//Определяем временную матрицу
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Matr temp;
-	//выделяем память под строки
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	temp.size = n * n;
 
 	temp.M = new double[temp.size];
-	//запсываем размеры матрицы
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	temp.order = n;
-	//возвращаем созданную матрицу
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	return temp;
 }
 
-// Печатает матрицу на экране
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+Matr InitMatrSSE(unsigned int n, unsigned int m)
+{
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	Matr temp;
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	temp.size = n * n;
+	void *ptr = _aligned_malloc(temp.size * sizeof(double), 16);
+	temp.M = reinterpret_cast<double*>(ptr);
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	temp.order = n;
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	return temp;
+}
+
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 void Print(Matr A)
 {
 	//printf("\n\nEnter Matrix To Console!!!\n");
@@ -39,7 +59,7 @@ void Print(Matr A)
 	printf("\n");
 }
 
-// Заполнение матрицы нолями, все элементы матрицы нули
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 //Matr EnterZero(Matr A)
 //{
 //	for (unsigned short int i = 0; i < A.size; i++)
@@ -62,7 +82,7 @@ Matr EnterZero(Matr A)
 
 
 
-// заполняет матрицу случайными вещественными числами
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Matr EnterRandom(Matr A)
 {
 	srand((unsigned int)time(0));
@@ -78,7 +98,7 @@ Matr EnterRandom(Matr A)
 	return A;
 }
 
-// заполняет матрицу числами введенными с клавиатуры
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Matr EnterMatr(Matr A)
 {
 	printf("\nEnter elements of matrix from Console...");
@@ -95,7 +115,7 @@ Matr EnterMatr(Matr A)
 	return A;
 }
 
-// Создание единичной матрицы
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Matr EnterUnit(Matr A)
 {
 	A = EnterZero(A);
@@ -111,19 +131,48 @@ Matr EnterUnit(Matr A)
 
 
 
+
+
+
 Matr sub(Matr A, Matr B, Matr buffer)
 {
 	//buffer = EnterZero(buffer);
-	for (unsigned short int i = 0; i < A.size; i++)
+	__m128d* a_pointer = reinterpret_cast<__m128d*>(A.M);
+	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
+	/*for (unsigned short int i = 0; i < A.size; i++)
 	{
 		buffer.M[i] = A.M[i] - B.M[i];
+	}*/
+	/*auto size = sizeof(double);
+	void *ptr = _aligned_malloc(A.size * size, 16);
+	double* c = reinterpret_cast<double*>(ptr);*/
+	for (unsigned short int i = 0; i < A.size / 2; i++, a_pointer++, b_pointer++, buffer.M += 2)
+	{
+		_mm_store_pd(buffer.M, _mm_sub_pd(*a_pointer, *b_pointer));
 	}
+	double last_a = *(reinterpret_cast<double*>(a_pointer));
+	double last_b = *(reinterpret_cast<double*>(b_pointer));
+	if (A.order % 2 == 1)
+	{
+		*buffer.M = last_a - last_b;
+		buffer.M += 1;
+	}
+	buffer.M -= buffer.size;
 	return buffer;
+	//return buffer;
 }
+
+
+
+
+
+
+
+
 
 Matr multiply(Matr A, Matr B, Matr buffer)
 {
-	//создаем вспомогательную матрицу
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	buffer = EnterZero(buffer);
 	double temp;
 	unsigned short int temp_i;
@@ -132,24 +181,52 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 	{
 		for (unsigned short int j = i + 1; j < B.order; j++)
 		{
-			temp_i = i*B.order;
-			temp_j = j*B.order;
+			temp_i = i * B.order;
+			temp_j = j * B.order;
 			temp = B.M[temp_i + j];
 			B.M[temp_i + j] = B.M[temp_j + i];
 			B.M[temp_j + i] = temp;
 		}
 	}
 
-	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
-	for (unsigned short int i = 0; i < A.order; i++)
+
+	//пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	/*for (unsigned short int i = 0; i < A.order; i++)
 	{
 		temp_i = i*A.order;
 		for (unsigned short int j = 0; j < B.order; j++)
 		{
 			buffer.M[temp_i + j] += A.M[temp_i + j] * B.M[temp_i + j];
 		}
+	}*/
+	Print(B);
+	__m128d* a_pointer = reinterpret_cast<__m128d*>(A.M);
+	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
+	__m128d *buf_for_string_mult=&(_mm_setzero_pd());
+	for (unsigned short int i = 0; i < A.size; i++, a_pointer++, b_pointer++, buffer.M ++)
+	{
+		*buf_for_string_mult = _mm_setzero_pd();
+		//СЃСѓРјРјРёСЂСѓРµРј РІ Р±СѓС„С„РµСЂ(РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РѕР±РЅСѓР»С‘РЅРЅС‹Р№) СЂРµР·СѓР»СЊС‚Р°С‚С‹ СѓРјРЅРѕР¶РµРЅРёСЏ СЃС‚СЂРѕРєРё РЅР° СЃС‚СЂРѕРєСѓ 
+		for (unsigned short int j = 0; j < A.order/2; j++, a_pointer++, b_pointer++)
+		{
+			*buf_for_string_mult = _mm_add_pd(*buf_for_string_mult, _mm_mul_pd(*a_pointer, *b_pointer));
+		}
+		//Р±РµСЂС‘Рј РїРµСЂРІРѕРµ С‡РёР»Рѕ РёР· Р±СѓС„С„РµСЂР° Рё РІС‚РѕСЂРѕРµ Рё СЃРєР»Р°РґС‹РІР°РµРј
+		double* first_double_in_str_buff= reinterpret_cast<double*>(buf_for_string_mult);		
+		double* second_double_in_str_buff = first_double_in_str_buff++;
+		double sum_of_str_mult = *first_double_in_str_buff + *second_double_in_str_buff;
+		//РµСЃР»Рё РїРѕСЂСЏРґРѕРє РЅРµС‡С‘С‚РЅС‹Р№,С‚Рѕ РґРѕР±Р°РІР»СЏРµРј Рє СЃСѓРјРјРµ СЂРµР·СѓР»СЊС‚Р°С‚ СѓРјРЅРѕР¶РµРЅРёСЏ РїРѕСЃР»РµРґРЅРёС… С‡РёСЃРµР»
+		if (A.order % 2 == 1)
+		{
+			double last_a = *(reinterpret_cast<double*>(a_pointer));
+			double last_b = *(reinterpret_cast<double*>(b_pointer));
+			sum_of_str_mult+= last_a * last_b;	
+	
+		}
+		*buffer.M = sum_of_str_mult;
 	}
-	//возвращаем результат умножения
+	
+	buffer.M -= buffer.size;
 	return buffer;
 }
 
@@ -157,17 +234,33 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 
 Matr mulScalar(double a, Matr B, Matr buffer)
 {
-	//buffer = EnterZero(buffer);
-	//во вспомогательную матрицу записываем результат умножения матрицы на скаляр
-	for (unsigned short int i = 0; i < B.size; i++)
-		buffer.M[i] = B.M[i] * a;
+	////buffer = EnterZero(buffer);
+	////пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	//for (unsigned short int i = 0; i < B.size; i++)
+	//	buffer.M[i] = B.M[i] * a;
+	//return buffer;
+
+
+	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
+	__m128d* double_pointer = reinterpret_cast<__m128d*>(&a);
+	for (unsigned short int i = 0; i < B.size / 2; i++, b_pointer++, buffer.M += 2)
+	{
+		_mm_store_pd(buffer.M, _mm_mul_pd(*double_pointer, *b_pointer));
+	}
+	double last_b = *(reinterpret_cast<double*>(b_pointer));
+	if (B.order % 2 == 1)
+	{
+		*buffer.M = a * last_b;
+		buffer.M += 1;
+	}
+	buffer.M -= buffer.size;
 	return buffer;
 }
 
 
 
 
-//Функция для рассчета следа матрицы
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 double Spur(Matr A)
 {
 	double t = 0;
@@ -193,4 +286,30 @@ double Spur(Matr A)
 //		}
 //	}
 //	return A;
+//}
+
+
+//void test()
+//{
+//	const auto N = 8;
+//
+//	alignas(16) float a[] = { 1.0,  2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+//	alignas(16) float b[] = { 1.0,  2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+//
+//	__m128* a_simd = reinterpret_cast<__m128*>(a);
+//	__m128* b_simd = reinterpret_cast<__m128*>(b);
+//
+//	auto size = sizeof(float);
+//	void *ptr = _aligned_malloc(N * size, 32);
+//	float* c = reinterpret_cast<float*>(ptr);
+//
+//	for (size_t i = 0; i < N / 2; i++, a_simd++, b_simd++, c += 4)
+//		_mm_store_ps(c, _mm_add_ps(*a_simd, *b_simd));
+//	c -= 2 * N;
+//
+//	std::cout.precision(10);
+//	for (size_t i = 0; i < N; i++)
+//		std::cout << c[i] << std::endl;
+//
+//
 //}
