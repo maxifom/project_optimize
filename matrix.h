@@ -1,4 +1,4 @@
-﻿//#pragma once
+//#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <time.h>
 
@@ -34,10 +34,10 @@ Matr InitMatrSSE(unsigned int n, unsigned int m)
 {
 	//���������� ��������� �������
 	Matr temp;
-	//�������� ������ ��� ������
 	temp.size = n * n;
-	void *ptr = _aligned_malloc(temp.size * sizeof(double), 16);
+	void *ptr = _aligned_malloc(n*n * sizeof(double), 16);
 	temp.M = reinterpret_cast<double*>(ptr);
+	//�������� ������ ��� ������
 	//��������� ������� �������
 	temp.order = n;
 	//���������� ��������� �������
@@ -202,17 +202,17 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 	Print(B);
 	__m128d* a_pointer = reinterpret_cast<__m128d*>(A.M);
 	__m128d* b_pointer = reinterpret_cast<__m128d*>(B.M);
-	__m128d *buf_for_string_mult=&(_mm_setzero_pd());
-	for (unsigned short int i = 0; i < A.size; i++, a_pointer++, b_pointer++, buffer.M ++)
+	__m128d *buf_for_string_mult = &(_mm_setzero_pd());
+	for (unsigned short int i = 0; i < A.size; i++, /*a_pointer++, b_pointer++,*/ buffer.M++)
 	{
 		*buf_for_string_mult = _mm_setzero_pd();
 		//суммируем в буффер(предварительно обнулённый) результаты умножения строки на строку 
-		for (unsigned short int j = 0; j < A.order/2; j++, a_pointer++, b_pointer++)
+		for (unsigned short int j = 0; j < A.order / 2; j++, a_pointer++, b_pointer++)
 		{
 			*buf_for_string_mult = _mm_add_pd(*buf_for_string_mult, _mm_mul_pd(*a_pointer, *b_pointer));
 		}
 		//берём первое чило из буффера и второе и складываем
-		double* first_double_in_str_buff= reinterpret_cast<double*>(buf_for_string_mult);		
+		double* first_double_in_str_buff = reinterpret_cast<double*>(buf_for_string_mult);
 		double* second_double_in_str_buff = first_double_in_str_buff++;
 		double sum_of_str_mult = *first_double_in_str_buff + *second_double_in_str_buff;
 		//если порядок нечётный,то добавляем к сумме результат умножения последних чисел
@@ -220,12 +220,14 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 		{
 			double last_a = *(reinterpret_cast<double*>(a_pointer));
 			double last_b = *(reinterpret_cast<double*>(b_pointer));
-			sum_of_str_mult+= last_a * last_b;	
-	
+			sum_of_str_mult += last_a * last_b;
+
+			//a_pointer = (reinterpret_cast<__m128d*>((char*)a_pointer - 8));
+			//b_pointer = (reinterpret_cast<__m128d*>((char*)b_pointer - 8));
 		}
 		*buffer.M = sum_of_str_mult;
 	}
-	
+
 	buffer.M -= buffer.size;
 	return buffer;
 }
