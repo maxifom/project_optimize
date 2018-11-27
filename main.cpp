@@ -9,57 +9,43 @@ using namespace std;
 
 int main()
 {
-
-
-	//test();
-	//system("PAUSE");
-	//return 0;
-
-
 	//Спрашиваем у пользователя и считываем размер матрицы, с которой будем работать
 	//printf("Enter Size of Matrix: ");
-	unsigned const short int N = 3;
+	unsigned short int N = 3;
 	//scanf("%i", &N);
 	//SquareMatr A2 = InitMatr(N, N);
 	//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 	//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
 	////A = EnterRandom(A);
 
-	Matr buffer = InitMatrSSE(N, N);
-	Matr A = InitMatrSSE(N, N);
-	Matr B = InitMatrSSE(N, N);
-	A.size = N*N;
-	A.order = N;
-	A.M = new double[N*N]{
-		4.0,8.0,16.0,20.0,10.0,2.0,3.1,4.2,5.0
-	};
-	B.size = N*N;
-	B.order = N;
-	B.M = new double[N*N]{
-		1.0,2.0,3.0,4.0,1.0,2.0,3.0,4.0,6.0
+
+	/*Matr A = InitMatr(N, N);
+
+	A.size = 9;
+	A.order = 3;
+	A.M = new double[9]{
+		1.0,2.0,3.0,4.0,10.0,6.0,7.0,8.0,9.0
 	};
 
 	Print(A);
-	Print(B);
-	Print(sub(A, B, buffer));
-	system("PAUSE");
-	return 0;
+
+	A = transpose(A);
+
+	Print(A);
+
+	return 0;*/
 
 
 
 	//unsigned int count = 2;
-	unsigned int count = 500000;
+	unsigned int count = 1;
 	unsigned int start_time = clock();
 	for (unsigned int _i = 0; _i < count; _i++)
 	{
 		//Создаем матрицу заданного размера
 		Matr A = InitMatr(N, N);
 
-		Matr buffer = InitMatrSSE(N, N);
-		
-
-
-
+		Matr buffer = InitMatr(N, N);
 		Matr buffer2 = InitMatr(N, N);
 		Matr buffer3 = InitMatr(N, N);
 		//Matr buffer4 = InitMatr(N, N);
@@ -76,10 +62,9 @@ int main()
 		//SquareMatr A2 = InitMatr(N, N);
 		//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 		//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
-		A = EnterRandom(A);
-		//Print(A);
+		//A = EnterRandom(A);
 		//заполняем матрицу с клавиатуры, актуально для небольши размеров матрицы
-		//A = EnterMatr(A);
+		A = EnterMatr(A);
 		//A2 = EnterMatr(A2);
 		//Print(A*A2);
 		//std::cout << Spur(A*A2) << std::endl;
@@ -157,17 +142,17 @@ int main()
 		//Смотрим время в конце работ алгоритма...
 		//unsigned int end_time = clock();
 		//Выводим коэффициенты характеристического полинома
-		//printf("\n\nCoeff polynom's: \n");
-		//for (int i = 0; i < N; i++)
-			//printf("Lambda %i  --   %6.8f\n", i + 1, lamb[i]);
+		printf("\n\nCoeff polynom's: \n");
+		for (int i = 0; i < N; i++)
+			printf("Lambda %i  --   %6.8f\n", i + 1, lamb[i]);
 		//Печатаем обратную матрицу
-		//printf("\n\nInverse Matrix:\n");
-		//Print(UA);
+		printf("\n\nInverse Matrix:\n");
+		Print(UA);
 		//Проверяем правильность обратной матрицы, выводм результат умножения обратной амтрицы и исходной
-		//printf("\n\ncheck to Inverse matrix: A^-1 * A\n");
-		//printf("Print A");
+		printf("\n\ncheck to Inverse matrix: A^-1 * A\n");
+		printf("Print A");
 		//Print(A);
-		//Print(multiply(UA, A, buffer));
+		Print(multiply(UA, A, buffer));
 		//Print(UA*A);
 	}
 
