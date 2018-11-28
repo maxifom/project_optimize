@@ -3,73 +3,41 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "matrix.h"
 #include <time.h>
+#include "testMatrixOperations.h"
+
 using namespace std;
 
-int main()
+void TestMatrixOperations(unsigned short int order)
 {
+	TestMulScalar(3);
+	TestMultiply(3);
+	TestSpur(3);
+	TestSubstract(3);
+}
 
-
-	//test();
-	//system("PAUSE");
-	//return 0;
-
-
+int Algorithm(unsigned int count, unsigned short int order)
+{
 	//Спрашиваем у пользователя и считываем размер матрицы, с которой будем работать
 	//printf("Enter Size of Matrix: ");
-	unsigned const short int N = 3;
+	unsigned short int N = order;
 	//scanf("%i", &N);
 	//SquareMatr A2 = InitMatr(N, N);
 	//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 	//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
 	////A = EnterRandom(A);
-	//Matr buffer = InitMatrSSE(N, N);
-	//Matr A = InitMatrSSE(N, N);
-	//Matr B = InitMatrSSE(N, N);
-	//A.size = N*N;
-	//A.order = N;
-
-	//void *ptr = _aligned_malloc(A.size * sizeof(double), 16);
-	//A.M = reinterpret_cast<double*>(ptr);
-	//A.M[0] = 10.0; A.M[1] = 11.0; A.M[2] = 12.0; A.M[3] = 13.0;
-	//A.M[4] = 14.0; A.M[5] = 15.0; A.M[6] = 16.0; A.M[7] = 17.0;
-	//A.M[8] = 18.0;
-	//B.size = N*N;
-	//B.order = N;
-	//void *ptr1 = _aligned_malloc(B.size * sizeof(double), 16);
-	//B.M = reinterpret_cast<double*>(ptr1);
-	//B.M[0] = 0.0; B.M[1] = 1.0; B.M[2] = 2.0; B.M[3] = 3.0;
-	//B.M[4] = 4.0; B.M[5] = 5.0; B.M[6] = 6.0; B.M[7] = 7.0;
-	//B.M[8] = 8.0;
-	//Print(A);
-	//Print(B);
-	//Print(sub(A, B, buffer));
-	//system("PAUSE");
-	//return 0;
-
-
-	bool print = true;
-	//unsigned int count = 2;
-	unsigned int count = 1000;
 	unsigned int start_time = clock();
 	for (unsigned int _i = 0; _i < count; _i++)
 	{
 		//Создаем матрицу заданного размера
-		Matr A = InitMatrSSE(N, N);
+		Matr A = InitMatr(N, N);
 
-		Matr buffer = InitMatrSSE(N, N);
-
-
-
-
-		Matr buffer2 = InitMatrSSE(N, N);
-		Matr buffer3 = InitMatrSSE(N, N);
+		Matr buffer = InitMatr(N, N);
+		Matr buffer2 = InitMatr(N, N);
+		Matr buffer3 = InitMatr(N, N);
 		//Matr buffer4 = InitMatr(N, N);
 		//buffer3 = EnterZero(buf)
 		//A = EnterMatr(A);
-
-
 		//A.size = 9;
 		//A.order = 3;
 		//A.M = new double[9]{
@@ -80,7 +48,6 @@ int main()
 		//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 		//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
 		A = EnterRandom(A);
-		//Print(A);
 		//заполняем матрицу с клавиатуры, актуально для небольши размеров матрицы
 		//A = EnterMatr(A);
 		//A2 = EnterMatr(A2);
@@ -98,17 +65,17 @@ int main()
 
 
 		//создаем две вспомогательных матрицы, они нужны для расчетов...
-		Matr A1 = InitMatrSSE(N, N);
-		Matr B1 = InitMatrSSE(N, N);
+		Matr A1 = InitMatr(N, N);
+		Matr B1 = InitMatr(N, N);
 		//Матрица B1 сначала единичная
 		B1 = EnterUnit(B1);
 		//std::cout << "Unit Matrix:";
 		//Print(B1 * B1);
 		//Print(A*B1);
 		//создаем матрицу, где будет записана обратная
-		Matr UA = InitMatrSSE(N, N);
+		Matr UA = InitMatr(N, N);
 		//создаем единичную матрицу, нужна для расчетов
-		Matr E = InitMatrSSE(N, N);
+		Matr E = InitMatr(N, N);
 		E = EnterUnit(E);
 		//Print(A-A);
 		//создаем массив, где бдут записаны коэффициенты характеристического полинома
@@ -170,10 +137,7 @@ int main()
 		//printf("\n\ncheck to Inverse matrix: A^-1 * A\n");
 		//printf("Print A");
 		//Print(A);
-		if (print)
-		{
-			Print(multiply(UA, A, buffer));
-		}
+		//Print(multiply(UA, A, buffer));
 		//Print(UA*A);
 	}
 
@@ -183,3 +147,12 @@ int main()
 	printf("Run time --- %10.8f\n\n", (float)(end_time - start_time) / count);
 	return 0;
 }
+
+int main()
+{
+	TestMatrixOperations(200);
+	Algorithm(10000, 3);
+	return 0;
+}
+
+
