@@ -47,7 +47,7 @@ int Algorithm(unsigned int count, unsigned short int order)
 		//SquareMatr A2 = InitMatr(N, N);
 		//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
 		//заполняем матрицу случайными числами ( для больших размеров матриц актуально)
-		A = EnterRandom(A);
+		EnterRandom(A);
 		//заполняем матрицу с клавиатуры, актуально для небольши размеров матрицы
 		//A = EnterMatr(A);
 		//A2 = EnterMatr(A2);
@@ -68,7 +68,7 @@ int Algorithm(unsigned int count, unsigned short int order)
 		Matr A1 = InitMatr(N, N);
 		Matr B1 = InitMatr(N, N);
 		//Матрица B1 сначала единичная
-		B1 = EnterUnit(B1);
+		EnterUnit(B1);
 		//std::cout << "Unit Matrix:";
 		//Print(B1 * B1);
 		//Print(A*B1);
@@ -76,7 +76,7 @@ int Algorithm(unsigned int count, unsigned short int order)
 		Matr UA = InitMatr(N, N);
 		//создаем единичную матрицу, нужна для расчетов
 		Matr E = InitMatr(N, N);
-		E = EnterUnit(E);
+		EnterUnit(E);
 		//Print(A-A);
 		//создаем массив, где бдут записаны коэффициенты характеристического полинома
 		double* lamb = new double[N];
@@ -119,7 +119,7 @@ int Algorithm(unsigned int count, unsigned short int order)
 		//Print(B1);
 		//cout << "buffer3:\n" << endl;
 		//Print(buffer3);
-		UA = mulScalar((1 / lamb[N - 1]), B1, buffer3);
+		//UA = mulScalar((1 / lamb[N - 1]), B1, buffer3);
 		//cout << "UA:\n" << endl;
 		//Print(UA);
 
@@ -150,8 +150,8 @@ int Algorithm(unsigned int count, unsigned short int order)
 
 int main()
 {
-	TestMatrixOperations(200);
-	Algorithm(10000, 3);
+	TestMatrixOperations(30);
+	//Algorithm(500000, 3);
 	return 0;
 }
 

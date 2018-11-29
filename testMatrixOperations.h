@@ -31,7 +31,7 @@ double TrustfulSpur(Matr A)
 Matr TrustfulMul(Matr A, Matr B)
 {
 	Matr C = InitMatr(A.order, B.order);
-	C = EnterZero(C);
+	EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
 	for (unsigned short int i = 0; i < A.order; i++)
 	for (unsigned short int j = 0; j < B.order; j++)

@@ -39,25 +39,28 @@ void Print(Matr A)
 }
 
 // «аполнение матрицы нол€ми, все элементы матрицы нули
-Matr EnterZero(Matr A)
+void EnterZero(Matr A)
 {
-	for (unsigned short int i = 0; i < A.size; i++)
+	double* end_array = A.M + A.size;
+	while (A.M < end_array)
 	{
-		A.M[i] = 0;
+		*A.M = 0.0;
+		A.M++;
 	}
-	return A;
+	A.M -= A.size;
 }
 
 // заполн€ет матрицу случайными вещественными числами
-Matr EnterRandom(Matr A)
+void EnterRandom(Matr A)
 {
 	srand((unsigned int)time(0));
-	for (unsigned short int i = 0; i < A.size; i++)
+	double* end_array = A.M + A.size;
+	while (A.M < end_array)
 	{
-		A.M[i] = (double)rand() * 0.0000306;
-		//A.M[i] = (double)rand() / RAND_MAX;
+		*A.M = (double)rand() * 0.0000306;
+		A.M++;
 	}
-	return A;
+	A.M -= A.size ;
 }
 
 // заполн€ет матрицу числами введенными с клавиатуры
@@ -77,32 +80,24 @@ Matr EnterMatr(Matr A)
 	return A;
 }
 
-// —оздание единичной матрицы
-Matr EnterUnit(Matr A)
+// —оздание единичной матрицыk
+// —оздание единичной матрицыk
+void EnterUnit(Matr A)
 {
-	A = EnterZero(A);
+	EnterZero(A);
 	for (unsigned short int i = 0; i < A.size; i += A.order + 1)
 	{
 		A.M[i] = 1;
 	}
-	return A;
+	/*double* end_array = A.M + A.size;
+	while (A.M < end_array)
+	{
+		*A.M = 1;
+		A.M+=A.order+1;
+	}
+	A.M -= A.size +A.order;*/
 }
 
-// ¬озвращает разность двух матриц
-Matr operator -(Matr A, Matr B)
-{
-	for (unsigned short int i = 0; i < A.size; i++)
-		A.M[i] -= B.M[i];
-	return A;
-}
-
-// ¬озвращает сумму двух матриц
-Matr operator +(Matr A, Matr B)
-{
-	for (unsigned short int i = 0; i < A.size; i++)
-		A.M[i] += B.M[i];
-	return A;
-}
 
 
 
@@ -116,14 +111,45 @@ Matr sub(Matr A, Matr B, Matr buffer)
 
 Matr multiply(Matr A, Matr B, Matr buffer)
 {
-	//создаем вспомогательную матрицу
-	buffer = EnterZero(buffer);
-	//во вспомогательную матрицу записываем результат умножени€ двух заданных матриц
-	for (unsigned short int i = 0; i < A.order; i++)
+	EnterZero(buffer);
+	/*for (unsigned short int i = 0; i < A.order; i++)
 		for (unsigned short int j = 0; j < B.order; j++)
 			for (unsigned short int l = 0; l < A.order; l++)
-				buffer.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
-	//возвращаем результат умножени€
+				buffer.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];*/
+	for (unsigned short int i = 0; i < A.size; i+=A.order)
+	{
+		for (unsigned short int j = 0; j < B.order; j++)
+		{
+			for (unsigned short int l = 0; l < A.order; l++)
+				buffer.M[i + j] += A.M[i + l] * B.M[l*A.order + j];
+		}
+	}
+	//double temp;
+	//unsigned short int temp_i;
+	//unsigned short int temp_j;
+	//for (unsigned short int i = 0; i < B.order; i++)
+	//{
+	//	for (unsigned short int j = i + 1; j < B.order; j++)
+	//	{
+	//		temp_i = i * B.order;
+	//		temp_j = j * B.order;
+	//		temp = B.M[temp_i + j];
+	//		B.M[temp_i + j] = B.M[temp_j + i];
+	//		B.M[temp_j + i] = temp;
+	//	}
+	//}
+
+	//for (unsigned short int i = 0; i < A.size; i+=A.order)
+	//{		
+	//	for (unsigned short int j = 0; j < A.order; j++)
+	//	{
+	//		for (unsigned short int l = 0; l < A.order; l++)
+	//		{
+	//			buffer.M[i + j] += A.M[i + l] * B.M[j*A.order + l];
+	//		}
+	//	}
+	//}
+
 	return buffer;
 }
 
@@ -134,7 +160,7 @@ Matr operator *(Matr A, Matr B)
 	//создаем вспомогательную матрицу
 	Matr C;
 	C = InitMatr(A.order, B.order);
-	C = EnterZero(C);
+	EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножени€ двух заданных матриц
 	for (unsigned short int i = 0; i < A.order; i++)
 		for (unsigned short int j = 0; j < B.order; j++)
@@ -159,7 +185,7 @@ Matr operator * (double a, Matr B)
 {
 	Matr C;
 	C = InitMatr(B.order, B.order);
-	C = EnterZero(C);
+	EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножени€ матрицы на скал€р
 	for (unsigned short int i = 0; i < B.size; i++)
 		C.M[i] = B.M[i] * a;
