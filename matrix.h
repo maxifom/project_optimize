@@ -10,7 +10,7 @@ struct Matr // Новый тип Квадратная матрица
 };
 
 // Функция определения матрицы. по ее размерам. Возвращает пустую матрицу
-Matr InitMatr(unsigned int n,unsigned int m)
+Matr InitMatr(unsigned int n, unsigned int m)
 {
 	//Определяем временную матрицу
 	Matr temp;
@@ -60,7 +60,7 @@ void EnterRandom(Matr A)
 		*A.M = (double)rand() * 0.0000306;
 		A.M++;
 	}
-	A.M -= A.size ;
+	A.M -= A.size;
 }
 
 // заполняет матрицу числами введенными с клавиатуры
@@ -103,19 +103,46 @@ void EnterUnit(Matr A)
 
 Matr sub(Matr A, Matr B, Matr buffer)
 {
-	//buffer = EnterZero(buffer);
 	for (unsigned short int i = 0; i < A.size; i++)
 		buffer.M[i] = A.M[i] - B.M[i];
+	/*double* end_array = A.M + A.size;
+	while (A.M < end_array)
+	{
+		*buffer.M = *A.M - *B.M;
+		A.M++;
+		B.M++;
+		buffer.M++;
+	}
+	A.M -= A.size;
+	B.M -= A.size;
+	buffer.M -= A.size;*/
 	return buffer;
 }
 
 Matr multiply(Matr A, Matr B, Matr buffer)
 {
 	EnterZero(buffer);
+	//FIRST VARIANT
 	/*for (unsigned short int i = 0; i < A.order; i++)
 		for (unsigned short int j = 0; j < B.order; j++)
 			for (unsigned short int l = 0; l < A.order; l++)
 				buffer.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];*/
+				//MULT WITH TRANSPOSING
+	/*double temp;
+	unsigned short int temp_i;
+	unsigned short int temp_j;
+	for (unsigned short int i = 0; i < B.order; i++)
+	{
+		for (unsigned short int j = i + 1; j < B.order; j++)
+		{
+			temp_i = i * B.order;
+			temp_j = j * B.order;
+			temp = B.M[temp_i + j];
+			B.M[temp_i + j] = B.M[temp_j + i];
+			B.M[temp_j + i] = temp;
+		}
+	}*/
+
 	for (unsigned short int i = 0; i < A.size; i+=A.order)
 	{
 		for (unsigned short int j = 0; j < B.order; j++)
@@ -124,50 +151,35 @@ Matr multiply(Matr A, Matr B, Matr buffer)
 				buffer.M[i + j] += A.M[i + l] * B.M[l*A.order + j];
 		}
 	}
-	//double temp;
-	//unsigned short int temp_i;
-	//unsigned short int temp_j;
-	//for (unsigned short int i = 0; i < B.order; i++)
+	//POINTERS MULT REQUARES TRANSPOSE
+	////unsigned short int i = 0;
+	//unsigned short int j;
+	////unsigned short int l;
+	//double* end_array_buffer = buffer.M + A.size;
+	//double* end_array_b = B.M + A.size;
+	//double* temp_b;
+	//while (buffer.M < end_array_buffer)
 	//{
-	//	for (unsigned short int j = i + 1; j < B.order; j++)
+	//	j = 0;
+	//	while (j < A.order)
 	//	{
-	//		temp_i = i * B.order;
-	//		temp_j = j * B.order;
-	//		temp = B.M[temp_i + j];
-	//		B.M[temp_i + j] = B.M[temp_j + i];
-	//		B.M[temp_j + i] = temp;
-	//	}
-	//}
-
-	//for (unsigned short int i = 0; i < A.size; i+=A.order)
-	//{		
-	//	for (unsigned short int j = 0; j < A.order; j++)
-	//	{
-	//		for (unsigned short int l = 0; l < A.order; l++)
+	//		temp_b = B.M + A.order;
+	//		while (B.M < temp_b)
 	//		{
-	//			buffer.M[i + j] += A.M[i + l] * B.M[j*A.order + l];
+	//			*buffer.M += *A.M * *B.M;
+	//			B.M++;
+	//			A.M++;
 	//		}
+	//		A.M -= A.order;
+	//		buffer.M++;
+	//		j++;
 	//	}
+	//	B.M -= A.size;
+	//	A.M += A.order;
 	//}
-
+	//buffer.M -= A.size;
+	//A.M -= A.size;
 	return buffer;
-}
-
-
-// Умножение двух матриц
-Matr operator *(Matr A, Matr B)
-{
-	//создаем вспомогательную матрицу
-	Matr C;
-	C = InitMatr(A.order, B.order);
-	EnterZero(C);
-	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
-	for (unsigned short int i = 0; i < A.order; i++)
-		for (unsigned short int j = 0; j < B.order; j++)
-			for (unsigned short int l = 0; l < A.order; l++)
-				C.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
-	//возвращаем результат умножения
-	return C;
 }
 
 Matr mulScalar(double a, Matr B, Matr buffer)
