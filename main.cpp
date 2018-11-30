@@ -8,19 +8,19 @@
 
 using namespace std;
 
-void TestMatrixOperations(unsigned short int order)
+void TestMatrixOperations(int order)
 {
-	TestMulScalar(3);
-	TestMultiply(3);
-	TestSpur(3);
-	TestSubstract(3);
+	TestMulScalar(order);
+	TestMultiply(order);
+	TestSpur(order);
+	TestSubstract(order);
 }
 
-int Algorithm(unsigned int count, unsigned short int order)
+int Algorithm(unsigned int count, int order)
 {
 	//Спрашиваем у пользователя и считываем размер матрицы, с которой будем работать
 	//printf("Enter Size of Matrix: ");
-	unsigned short int N = order;
+	int N = order;
 	//scanf("%i", &N);
 	//SquareMatr A2 = InitMatr(N, N);
 	//двва способа заполнить матрицу, раскоменнтировать тот который нужен 
@@ -51,7 +51,7 @@ int Algorithm(unsigned int count, unsigned short int order)
 		//заполняем матрицу с клавиатуры, актуально для небольши размеров матрицы
 		//A = EnterMatr(A);
 		//A2 = EnterMatr(A2);
-		//Print(A*A2);
+		//Print(A);
 		//std::cout << Spur(A*A2) << std::endl;
 		//выводим матрицу на экран
 		/*Print(A);
@@ -84,7 +84,7 @@ int Algorithm(unsigned int count, unsigned short int order)
 		//unsigned int start_time = clock();
 		//начинаем сам алгоритм Леверье-Фаддеева, запускаем не до последнего элемента
 		//последний шаг считаем отдельно
-		for (unsigned short int i = 1; i < N; i++)
+		for (int i = 1; i < N; i++)
 		{
 			//Пересчитываем матрицу A1 и B1 по формулам Фаддеева
 			A1 = multiply(A, B1, buffer);
@@ -148,10 +148,22 @@ int Algorithm(unsigned int count, unsigned short int order)
 	return 0;
 }
 
+void test_omp()
+{
+	#pragma omp parallel
+	{
+		int nthread=omp_get_num_threads();
+		int thread_id = omp_get_thread_num();
+		cout << "Hello, world from thread "
+			<< thread_id << " of "
+			<< nthread << endl;
+	}
+}
 int main()
 {
-	TestMatrixOperations(30);
-	//Algorithm(500000, 3);
+	//TestMatrixOperations(3);
+	Algorithm(20, 100);
+	//test_omp();
 	return 0;
 }
 

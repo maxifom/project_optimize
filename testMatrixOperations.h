@@ -7,7 +7,7 @@ using namespace std;
 Matr TrustfulSub(Matr A, Matr B)
 {
 	Matr C = InitMatr(A.order, B.order);
-	for (unsigned short int i = 0; i < A.size; i++)
+	for (int i = 0; i < A.size; i++)
 		C.M[i] = A.M[i] - B.M[i];
 	return C;
 }
@@ -15,7 +15,7 @@ Matr TrustfulSub(Matr A, Matr B)
 Matr TrustfulMulScalar(double lambda, Matr A)
 {
 	Matr C = InitMatr(A.order, A.order);
-	for (unsigned short int i = 0; i < A.size; i++)
+	for (int i = 0; i < A.size; i++)
 		C.M[i] = A.M[i] * lambda;
 	return C;
 }
@@ -23,7 +23,7 @@ Matr TrustfulMulScalar(double lambda, Matr A)
 double TrustfulSpur(Matr A)
 {
 	double t = 0;
-	for (unsigned short int i = 0; i < A.size; i += A.order + 1)
+	for (int i = 0; i < A.size; i += A.order + 1)
 		t += A.M[i];
 	return t;
 }
@@ -33,9 +33,9 @@ Matr TrustfulMul(Matr A, Matr B)
 	Matr C = InitMatr(A.order, B.order);
 	EnterZero(C);
 	//во вспомогательную матрицу записываем результат умножения двух заданных матриц
-	for (unsigned short int i = 0; i < A.order; i++)
-	for (unsigned short int j = 0; j < B.order; j++)
-	for (unsigned short int l = 0; l < A.order; l++)
+	for (int i = 0; i < A.order; i++)
+	for (int j = 0; j < B.order; j++)
+	for (int l = 0; l < A.order; l++)
 		C.M[i*A.order + j] += A.M[i*A.order + l] * B.M[l*A.order + j];
 	//возвращаем результат умножения
 	return C;
@@ -43,7 +43,7 @@ Matr TrustfulMul(Matr A, Matr B)
 void FillMatrixSameRandomValues(Matr A, Matr B)
 {
 	srand((unsigned int)time(0));
-	for (unsigned short int i = 0; i < A.size; i++)
+	for (int i = 0; i < A.size; i++)
 	{
 		A.M[i] = B.M[i] = (double)rand() * 0.0000306;
 	}
@@ -51,13 +51,13 @@ void FillMatrixSameRandomValues(Matr A, Matr B)
 
 bool AreMatrixEqual(Matr A, Matr B)
 {
-	for (unsigned short int i = 0; i < A.size; i++)
+	for (int i = 0; i < A.size; i++)
 	if (A.M[i] != B.M[i])
 		return false;
 	return true;
 }
 
-void TestMultiply(unsigned short int order)
+void TestMultiply(int order)
 {
 	Matr buffer = InitMatr(order, order);
 	Matr A = InitMatr(order, order);
@@ -71,9 +71,13 @@ void TestMultiply(unsigned short int order)
 	if (AreMatrixEqual(TrustfulResult, ActualResult))
 		cout << "Multiply is correct!\n";
 	else cout << "Multiply is incorrect!\n";
+	if (!AreMatrixEqual(A, C))
+		cout << "	Matrix A has changed!\n";
+	if (!AreMatrixEqual(B, D))
+		cout << "	Matrix B has changed!\n";
 }
 
-void TestSubstract(unsigned short int order)
+void TestSubstract(int order)
 {
 	Matr buffer = InitMatr(order, order);
 	Matr A = InitMatr(order, order);
@@ -89,7 +93,7 @@ void TestSubstract(unsigned short int order)
 	else cout << "Substract is incorrect!\n";
 }
 
-void TestMulScalar(unsigned short int order)
+void TestMulScalar(int order)
 {
 	srand((unsigned int)time(0));
     double lambda = (double)rand() * 0.0000306;
@@ -104,7 +108,7 @@ void TestMulScalar(unsigned short int order)
 	else cout << "Scalar multiplication is incorrect!\n";
 }
 
-void TestSpur(unsigned short int order)
+void TestSpur(int order)
 {
 	Matr buffer = InitMatr(order, order);
 	Matr A = InitMatr(order, order);
